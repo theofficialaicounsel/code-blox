@@ -1,0 +1,788 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>code-blox</title>
+  <style>
+    * { box-sizing: border-box; }
+    :root {
+      --bg: #000;
+      --bg-panel: #000;
+      --bg-card: rgba(15, 15, 15, 0.8);
+      --border: rgba(250, 204, 21, 0.3);
+      --accent: #facc15;
+      --accent-soft: rgba(250, 204, 21, 0.12);
+      --text: #fff;
+      --muted: #94a3b8;
+      --danger: #ef4444;
+      --success: #22c55e;
+      --radius-lg: 16px;
+      --radius-md: 12px;
+      --radius-sm: 8px;
+    }
+    body {
+      margin: 0;
+      padding: 16px;
+      font-family: monospace;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+    }
+    .app {
+      max-width: 1400px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+    header {
+      padding: 20px;
+      border-radius: var(--radius-lg);
+      background: #000;
+      border: 3px solid var(--border);
+    }
+    header h1 { 
+      margin: 0; 
+      font-size: 28px; 
+      font-weight: 300; 
+      color: var(--accent);
+    }
+    header p { 
+      margin: 8px 0 0; 
+      font-size: 14px; 
+      color: var(--muted);
+    }
+    .pill-row { 
+      display: flex; 
+      flex-wrap: wrap; 
+      gap: 8px; 
+      margin-top: 12px;
+    }
+    .pill {
+      font-size: 11px; 
+      padding: 4px 12px; 
+      border-radius: 999px;
+      border: 1px solid rgba(250, 204, 21, 0.5); 
+      color: var(--muted);
+      background: rgba(250, 204, 21, 0.1);
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+    @media (max-width: 960px) {
+      .layout { grid-template-columns: 1fr; }
+      header { padding: 16px; }
+    }
+
+    .panel {
+      background: var(--bg-panel);
+      border-radius: var(--radius-lg);
+      border: 3px solid var(--border);
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .panel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: -4px;
+    }
+    .panel-title {
+      font-size: 22px;
+      font-weight: 300;
+      color: var(--accent);
+      border-bottom: 2px solid var(--accent);
+      padding-bottom: 8px;
+    }
+    .panel-sub {
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    textarea {
+      width: 100%;
+      min-height: 300px;
+      border-radius: var(--radius-md);
+      border: 2px solid var(--accent);
+      background: rgba(0, 0, 0, 0.4);
+      color: var(--text);
+      padding: 14px;
+      font-family: ui-monospace, monospace;
+      font-size: 13.5px;
+      resize: vertical;
+      outline: none;
+    }
+    textarea:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 10px rgba(250, 204, 21, 0.5);
+    }
+
+    .btn-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    button {
+      border: none;
+      border-radius: 8px;
+      padding: 10px 18px;
+      font-size: 13px;
+      font-weight: bold;
+      cursor: pointer;
+      font-family: monospace;
+      transition: all 0.2s;
+      background: #111;
+      color: var(--text);
+      border: 1px solid rgba(250, 204, 21, 0.3);
+    }
+    button.primary {
+      background: var(--accent);
+      color: #000;
+      box-shadow: 0 4px 20px rgba(250, 204, 21, 0.5);
+      border: none;
+    }
+    button.primary:hover {
+      transform: scale(1.05);
+      box-shadow: 0 6px 30px rgba(250, 204, 21, 0.7);
+    }
+    button.success {
+      background: var(--success);
+      color: #000;
+      box-shadow: 0 4px 20px rgba(34, 197, 94, 0.5);
+      border: none;
+    }
+    button.success:hover {
+      transform: scale(1.05);
+      box-shadow: 0 6px 30px rgba(34, 197, 94, 0.7);
+    }
+    button.danger {
+      background: var(--danger);
+      color: #fff;
+      box-shadow: 0 4px 20px rgba(239, 68, 68, 0.5);
+      border: none;
+    }
+    button.danger:hover {
+      transform: scale(1.05);
+      box-shadow: 0 6px 30px rgba(239, 68, 68, 0.7);
+    }
+    button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+    button.small {
+      font-size: 11px;
+      padding: 6px 10px;
+    }
+
+    .status {
+      font-size: 13px;
+      padding: 10px 14px;
+      border-radius: var(--radius-md);
+      background: rgba(34, 197, 94, 0.2);
+      color: #22c55e;
+      border: 2px solid rgba(34, 197, 94, 0.5);
+      display: none;
+    }
+    .status.error {
+      background: rgba(239, 68, 68, 0.2);
+      color: #ef4444;
+      border-color: rgba(239, 68, 68, 0.5);
+    }
+    .status.show { display: block; }
+
+    .stack {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      max-height: 500px;
+      overflow-y: auto;
+      padding-right: 4px;
+    }
+
+    .block-card {
+      background: rgba(250, 204, 21, 0.1);
+      border-radius: var(--radius-md);
+      border: 2px solid rgba(250, 204, 21, 0.5);
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      cursor: default;
+      transition: all 0.2s;
+    }
+    .block-card:hover { 
+      border-color: var(--accent);
+      background: rgba(250, 204, 21, 0.15);
+    }
+
+    .block-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 8px;
+    }
+    .block-name {
+      font-size: 16px;
+      font-weight: 800;
+      color: var(--accent);
+    }
+    .block-meta {
+      font-size: 13px;
+      color: var(--muted);
+    }
+    .block-type-pill {
+      font-size: 11px;
+      padding: 4px 10px;
+      border-radius: 6px;
+      background: rgba(56, 189, 248, 0.2);
+      color: #bae6fd;
+      border: 1px solid rgba(56, 189, 248, 0.5);
+      white-space: nowrap;
+    }
+    .block-description {
+      font-size: 13px;
+      color: var(--muted);
+      line-height: 1.4;
+    }
+    .block-preview {
+      display: none; /* Removed preview as requested */
+    }
+    .block-actions {
+      display: flex;
+      gap: 8px;
+      margin-top: 8px;
+    }
+
+    .builder-summary {
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .output-box {
+      background: #000;
+      border-radius: var(--radius-md);
+      border: 2px solid var(--accent);
+      padding: 16px;
+      font-family: ui-monospace, monospace;
+      font-size: 13px;
+      max-height: 400px;
+      overflow-y: auto;
+      white-space: pre;
+      line-height: 1.5;
+      color: var(--text);
+    }
+
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.8);
+      backdrop-filter: blur(4px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+    }
+    .modal-backdrop.show { display: flex; }
+    .modal {
+      width: 90%;
+      max-width: 700px;
+      max-height: 90vh;
+      background: #000;
+      border-radius: 16px;
+      border: 3px solid rgba(250, 204, 21, 0.3);
+      box-shadow: 0 20px 70px rgba(0,0,0,0.9);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    .modal-header {
+      padding: 20px 20px 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .modal-title { 
+      font-size: 22px; 
+      font-weight: 300; 
+      color: var(--accent);
+      border-bottom: 2px solid var(--accent);
+      padding-bottom: 8px;
+    }
+    .modal-body {
+      padding: 16px 20px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .modal-footer {
+      padding: 0 20px 20px;
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+    }
+    .modal input, .modal textarea {
+      width: 100%;
+      background: rgba(0, 0, 0, 0.4);
+      border: 2px solid var(--accent);
+      border-radius: var(--radius-md);
+      padding: 10px 12px;
+      color: var(--text);
+      font-family: monospace;
+      font-size: 13.5px;
+    }
+    .modal input:focus, .modal textarea:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 10px rgba(250, 204, 21, 0.5);
+    }
+    .modal textarea { 
+      resize: vertical; 
+      min-height: 300px; 
+      font-size: 13px;
+    }
+  </style>
+  <title>code-blox</title>
+</head>
+<body>
+  <div class="app">
+    <header>
+      <h1>code-blox: intuitive app creation</h1>
+      <p>paste HTML → extract reusable blocks → rebuild new pages by mixing and matching.</p>
+      <div class="pill-row">
+        <div class="pill">Smart extraction</div>
+        <div class="pill">Edit blocks</div>
+        <div class="pill">Reorder</div>
+        <div class="pill">Rebuild full page</div>
+      </div>
+    </header>
+
+    <div class="layout">
+      <!-- LEFT -->
+      <section class="panel">
+        <div class="panel-header">
+          <div>
+            <div class="panel-title">Input HTML</div>
+            <div class="panel-sub">Paste a complete page (with &lt;head&gt; and &lt;body&gt;)</div>
+          </div>
+        </div>
+
+        <textarea id="html-input" placeholder="Paste your full HTML here..."></textarea>
+
+        <div class="btn-row">
+          <button class="primary" onclick="processInput()">Extract Blocks</button>
+          <button class="danger" onclick="clearInput()">Clear All</button>
+        </div>
+        <div id="status" class="status"></div>
+
+        <div class="panel-header">
+          <div>
+            <div class="panel-title">Extracted Blocks</div>
+            <div class="panel-sub">Click to quick-add · buttons for more options</div>
+          </div>
+        </div>
+
+        <div id="components-list" class="stack">
+          <div class="panel-sub">Nothing yet. Paste HTML and extract.</div>
+        </div>
+      </section>
+
+      <!-- RIGHT -->
+      <section class="panel">
+        <div class="panel-header">
+          <div>
+            <div class="panel-title">Builder</div>
+            <div class="panel-sub">Final page will be built from these blocks in order</div>
+          </div>
+          <span class="builder-summary" id="builder-summary">0 blocks</span>
+        </div>
+
+        <div class="btn-row">
+          <button onclick="saveTemplate()">Save Layout</button>
+          <button onclick="loadTemplate()">Load Layout</button>
+          <button class="danger" onclick="clearBuilder()">Clear Builder</button>
+        </div>
+
+        <div id="builder" class="stack">
+          <div class="panel-sub">Add blocks from the left panel</div>
+        </div>
+
+        <div class="panel-header" style="margin-top:8px;">
+          <div>
+            <div class="panel-title">Final Output</div>
+            <div class="panel-sub">Copy or download the rebuilt page</div>
+          </div>
+        </div>
+
+        <div class="btn-row">
+          <button class="primary" onclick="copyTemplate()">Copy HTML</button>
+          <button class="success" onclick="downloadTemplate()">Download .html</button>
+        </div>
+
+        <div id="output-code" class="output-box"></div>
+      </section>
+    </div>
+  </div>
+  <div id="edit-modal-backdrop" class="modal-backdrop">
+    <div class="modal">
+      <div class="modal-header">
+        <div class="modal-title">Edit Block</div>
+        <button onclick="closeEditModal()">✕</button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="edit-index">
+        <label style="color: var(--accent); font-weight: bold;">Name</label>
+        <input type="text" id="edit-name" placeholder="e.g. Hero Section">
+
+        <label style="color: var(--accent); font-weight: bold;">Description (optional)</label>
+        <textarea id="edit-description" rows="2" placeholder="What does this block do?"></textarea>
+
+        <label style="color: var(--accent); font-weight: bold;">Content (raw HTML/CSS/JS)</label>
+        <textarea id="edit-content" rows="10"></textarea>
+      </div>
+      <div class="modal-footer">
+        <button class="danger" onclick="closeEditModal()">Cancel</button>
+        <button class="primary" onclick="saveEdit()">Save Changes</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let components = [];
+    let builderItems = [];
+
+    function showStatus(msg, isError = false) {
+      const el = document.getElementById('status');
+      el.textContent = msg;
+      el.classList.toggle('error', isError);
+      el.classList.add('show');
+      setTimeout(() => el.classList.remove('show'), 3000);
+    }
+
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+
+    function extractTextContent(el) {
+      return el.innerHTML || el.textContent || '';
+    }
+
+    function getOuterHtmlPreserveCase(el) {
+      return el.outerHTML;
+    }
+
+    function processInput() {
+      const input = document.getElementById('html-input').value.trim();
+      if (!input) return showStatus('Paste HTML first!', true);
+
+      try {
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(input, 'text/html');
+
+        components = [];
+        builderItems = [];
+        updateBuilder();
+        document.getElementById('output-code').textContent = '';
+
+        const head = doc.head || doc.querySelector('head');
+        const body = doc.body || doc.querySelector('body');
+
+        // === HEAD: Title ===
+        const titleEl = doc.querySelector('title');
+        if (titleEl) {
+          components.push({
+            id: 'head-title',
+            name: 'Page Title',
+            kind: 'head-title',
+            area: 'head',
+            content: titleEl.outerHTML,
+            rawContent: titleEl.textContent.trim() || 'Untitled',
+            description: 'The <title> of the page'
+          });
+        }
+
+        // === HEAD: Meta, Link, etc (non-style/script) ===
+        const headClone = head ? head.cloneNode(true) : document.createElement('head');
+        headClone.querySelectorAll('style, script, title').forEach(el => el.remove());
+        const headExtras = headClone.innerHTML.trim();
+        if (headExtras) {
+          components.push({
+            id: 'head-extras',
+            name: 'Head Meta & Links',
+            kind: 'head-meta',
+            area: 'head',
+            content: headExtras,
+            description: 'Meta tags, favicon, OpenGraph, etc.'
+          });
+        }
+
+        // === HEAD: Styles ===
+        const styles = doc.querySelectorAll('head style, link[rel="stylesheet"]');
+        styles.forEach((el, i) => {
+          const isLink = el.tagName === 'LINK';
+          components.push({
+            id: 'style-' + i,
+            name: isLink ? `Stylesheet → ${el.href.split('/').pop()}` : `Inline Styles #${i+1}`,
+            kind: isLink ? 'external-css' : 'inline-css',
+            area: 'head',
+            content: el.outerHTML,
+            description: isLink ? 'External stylesheet' : 'Inline <style> block'
+          });
+        });
+
+        // === HEAD: Scripts (external + inline) ===
+        const headScripts = doc.querySelectorAll('head script');
+        headScripts.forEach((el, i) => {
+          const src = el.getAttribute('src');
+          components.push({
+            id: 'head-script-' + i,
+            name: src ? `Head Script → ${src.split('/').pop()}` : `Head Inline Script #${i+1}`,
+            kind: src ? 'external-js' : 'inline-js',
+            area: 'head',
+            content: el.outerHTML,
+            description: src ? 'External script (head)' : 'Inline script in head'
+          });
+        });
+
+        // === BODY: Scripts ===
+        const bodyScripts = doc.querySelectorAll('body script');
+        bodyScripts.forEach((el, i) => {
+          const src = el.getAttribute('src');
+          components.push({
+            id: 'body-script-' + i,
+            name: src ? `Body Script → ${src.split('/').pop()}` : `Body Inline Script #${i+1}`,
+            kind: src ? 'external-js' : 'inline-js',
+            area: 'body',
+            content: el.outerHTML,
+            description: src ? 'External script (body)' : 'Inline script at end of body'
+          });
+        });
+
+        // === BODY: Top-level elements (real blocks) ===
+        if (body) {
+          const bodyClone = body.cloneNode(true);
+          bodyClone.querySelectorAll('script').forEach(s => s.remove());
+          Array.from(bodyClone.children).forEach((el, i) => {
+            if (el.tagName) {
+              components.push({
+                id: 'body-block-' + i,
+                name: `${el.tagName.toLowerCase()} block #${i+1}`,
+                kind: 'body-html',
+                area: 'body',
+                content: el.outerHTML,
+                description: 'Visual or structural HTML block'
+              });
+            }
+          });
+        }
+
+        displayComponents();
+        showStatus(`Extracted ${components.length} blocks successfully!`);
+      } catch (err) {
+        showStatus('Parsing failed: ' + err.message, true);
+      }
+    }
+
+    function displayComponents() {
+      const container = document.getElementById('components-list');
+      if (!components.length) {
+        container.innerHTML = '<div class="panel-sub">No blocks extracted yet.</div>';
+        return;
+      }
+
+      container.innerHTML = components.map(c => `
+        <article class="block-card" onclick="quickAddToBuilder('${c.id}')">
+          <div class="block-header">
+            <div>
+              <div class="block-name">${escapeHtml(c.name)}</div>
+              <div class="block-meta">${c.kind.replace('-', ' ')}</div>
+            </div>
+            <span class="block-type-pill">${c.area}</span>
+          </div>
+          <div class="block-description">${escapeHtml(c.description)}</div>
+          <div class="block-actions">
+            <button class="primary small" onclick="event.stopPropagation(); addToBuilder('${c.id}')">Add to Builder</button>
+            <button class="small" onclick="event.stopPropagation(); copyText(c.content)">Copy Block</button>
+          </div>
+        </article>
+      `).join('');
+    }
+
+    function quickAddToBuilder(id) { addToBuilder(id); }
+    
+    function addToBuilder(id) {
+      const src = components.find(c => c.id === id);
+      if (!src) return;
+      builderItems.push({
+        ...src,
+        builderId: 'builder-' + Date.now() + Math.random()
+      });
+      updateBuilder();
+    }
+
+    function updateBuilder() {
+      const container = document.getElementById('builder');
+      const summary = document.getElementById('builder-summary');
+
+      if (!builderItems.length) {
+        container.innerHTML = '<div class="panel-sub">← Add blocks from the left</div>';
+        summary.textContent = '0 blocks';
+      } else {
+        container.innerHTML = builderItems.map((b, i) => `
+          <article class="block-card">
+            <div class="block-header">
+              <div>
+                <div class="block-name">${escapeHtml(b.name)}</div>
+                <div class="block-meta">${b.kind.replace('-', ' ')} · ${b.area}</div>
+              </div>
+              <div class="block-actions">
+                <button class="small" onclick="moveUp(${i})" ${i===0?'disabled':''}>↑</button>
+                <button class="small" onclick="moveDown(${i})" ${i===builderItems.length-1?'disabled':''}>↓</button>
+              </div>
+            </div>
+            <div class="block-description">${escapeHtml(b.description || '')}</div>
+            <div class="block-actions">
+              <button class="small" onclick="openEditModal(${i})">Edit</button>
+              <button class="danger small" onclick="removeFromBuilder(${i})">Remove</button>
+            </div>
+          </article>
+        `).join('');
+        summary.textContent = `${builderItems.length} block${builderItems.length === 1 ? '' : 's'}`;
+      }
+      generateOutput();
+    }
+
+    function moveUp(i) { if (i > 0) { [builderItems[i-1], builderItems[i]] = [builderItems[i], builderItems[i-1]]; updateBuilder(); } }
+    function moveDown(i) { if (i < builderItems.length-1) { [builderItems[i+1], builderItems[i]] = [builderItems[i], builderItems[i+1]]; updateBuilder(); } }
+    function removeFromBuilder(i) { builderItems.splice(i, 1); updateBuilder(); }
+
+    function generateOutput() {
+      const headBlocks = builderItems.filter(b => b.area === 'head');
+      const bodyBlocks = builderItems.filter(b => b.area === 'body');
+
+      let html = `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+`;
+
+      // Add head blocks (title first, then meta, then styles, then scripts)
+      const titleBlock = headBlocks.find(b => b.kind === 'head-title');
+      if (titleBlock) html += '  ' + titleBlock.content + '\n';
+
+      headBlocks
+        .filter(b => b.kind !== 'head-title')
+        .forEach(b => html += '  ' + b.content.trim() + '\n');
+
+      html += `  <title>${titleBlock ? escapeHtml(titleBlock.rawContent || 'New Page') : 'New Page'}</title>
+</head>
+<body>
+`;
+
+      bodyBlocks.forEach(b => {
+        html += '  ' + b.content.trim() + '\n';
+      });
+
+      html += `</body>
+</html>`;
+
+      document.getElementById('output-code').textContent = html;
+    }
+
+    function copyText(text) {
+      navigator.clipboard.writeText(text).then(() => showStatus('Copied!')).catch(() => showStatus('Copy failed', true));
+    }
+
+    function copyTemplate() {
+      const code = document.getElementById('output-code').textContent;
+      if (!code.trim()) return showStatus('Nothing to copy', true);
+      copyText(code);
+      showStatus('Full page copied to clipboard!');
+    }
+
+    function downloadTemplate() {
+      const code = document.getElementById('output-code').textContent;
+      if (!code.trim()) return showStatus('Nothing to download', true);
+      const blob = new Blob([code], {type: 'text/html'});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'rebuilt-page.html';
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    function saveTemplate() {
+      if (!builderItems.length) return showStatus('Builder is empty', true);
+      const name = prompt('Save layout as:', 'My Layout ' + new Date().toLocaleDateString());
+      if (!name) return;
+      const saved = JSON.parse(localStorage.getItem('blockMixerLayouts') || '{}');
+      saved[name] = { items: builderItems, savedAt: new Date().toISOString() };
+      localStorage.setItem('blockMixerLayouts', JSON.stringify(saved));
+      showStatus(`Saved as "${name}"`);
+    }
+
+    function loadTemplate() {
+      const saved = JSON.parse(localStorage.getItem('blockMixerLayouts') || '{}');
+      const keys = Object.keys(saved);
+      if (!keys.length) return showStatus('No saved layouts', true);
+      const choice = prompt('Enter layout name:\n\n' + keys.join('\n'));
+      if (choice && saved[choice]) {
+        builderItems = saved[choice].items;
+        updateBuilder();
+        showStatus(`Loaded "${choice}"`);
+      } else {
+        showStatus('Not found', true);
+      }
+    }
+
+    function clearInput() {
+      document.getElementById('html-input').value = '';
+      components = [];
+      builderItems = [];
+      displayComponents();
+      updateBuilder();
+      document.getElementById('output-code').textContent = '';
+    }
+
+    function clearBuilder() {
+      builderItems = [];
+      updateBuilder();
+    }
+
+    // Modal
+    function openEditModal(idx) {
+      const block = builderItems[idx];
+      document.getElementById('edit-index').value = idx;
+      document.getElementById('edit-name').value = block.name;
+      document.getElementById('edit-description').value = block.description || '';
+      document.getElementById('edit-content').value = block.content;
+      document.getElementById('edit-modal-backdrop').classList.add('show');
+    }
+
+    function closeEditModal() {
+      document.getElementById('edit-modal-backdrop').classList.remove('show');
+    }
+
+    function saveEdit() {
+      const idx = +document.getElementById('edit-index').value;
+      if (isNaN(idx)) return;
+      builderItems[idx].name = document.getElementById('edit-name').value;
+      builderItems[idx].description = document.getElementById('edit-description').value;
+      builderItems[idx].content = document.getElementById('edit-content').value;
+      closeEditModal();
+      updateBuilder();
+      showStatus('Block updated');
+    }
+  </script>
+</body>
+</html>

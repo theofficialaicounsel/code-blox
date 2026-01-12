@@ -3,12 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>code-blox: js (AST grouped)</title>
-
-<!-- Acorn parser for robust AST extraction -->
-<script src="https://unpkg.com/acorn@8.8.2/dist/acorn.min.js"></script>
-<script srcscript>
-
+<title>code-blox: js</title>
 <style>
   /* MOBILE-FIRST APPROACH */
   :root {
@@ -16,15 +11,7 @@
     --neon-glow: 0 0 10px rgba(250, 204, 21, 0.5);
     --panel: #000;
     --text: #fff;
-    --muted: #94a3b8;
-  }
-  
-  * {
-    box-sizing: border-box;
-  }
-  
-  body {
-    background: #000;
+    --muted: #000;
     color: var(--text);
     margin: 0;
     padding: 12px; /* Reduced padding for mobile */
@@ -52,12 +39,7 @@
     body {
       padding: 16px;
     }
-  }
-  
-  /* DESKTOP */
-  @media (min-width: 1024px) {
-    .grid {
-      max-width: 1400px;
+ : 1400px;
     }
   }
   
@@ -80,7 +62,11 @@
     word-break: break-word;
   }
   
-  /* TEXTAREA - MOBILE OPTIMIZED4);
+  /* TEXTAREA - MOBILE OPTIMIZED */
+  textarea {
+    width: 100%;
+    height: 200px; /* Shorter on mobile */
+    background: rgba(0, 0, 0, 0.4);
     border: 1px solid var(--neon);
     border-radius: 8px;
     color: var(--text);
@@ -104,7 +90,12 @@
   
   textarea:focus {
     border-width: 2px;
-    box-shadow: 0 0 16px; /* Bigger for touch */
+    box-shadow: 0 0 8px rgba(250, 204, 21, 0.5);
+  }
+  
+  /* BUTTONS - TOUCH-FRIENDLY */
+  button {
+    padding: 12px 16px; /* Bigger for touch */
     margin: 4px;
     border: none;
     border-radius: 8px;
@@ -113,7 +104,11 @@
     font-family: -apple-system, system-ui, sans-serif;
     transition: all 0.2s;
     font-size: 14px;
-    min-height: 44px; /* Minimum touch target ON MOBILE */
+    min-height: 44px; /* Minimum touch target size */
+    min-width: 44px;
+  }
+  
+  /* BUTTON ROWS - STACK ON MOBILE */
   .btn-row {
     display: flex;
     flex-wrap: wrap;
@@ -137,9 +132,7 @@
   button.success {
     background: #22c55e;
     color: #000;
-    box-shadow: 0 2px 8px rgba(34, 197, 94, 0.5);
-    flex: 1;
-    min-width: 120px;
+    box-shadow: 0 2px 8px rgba(34, 197, 94px;
   }
   
   button.danger {
@@ -148,11 +141,11 @@
     box-shadow: 0 2px 8px rgba(239, 68, 68, 0.5);
     flex: 1;
     min-width: 120px;
+: 36px;
+    min-width: 60px;
   }
   
-  button.small {
-    font-size: 12px;
-    /* BLOCKS CONTAINER - SCROLLABLE */
+  /* BLOCKS CONTAINER - SCROLLABLE */
   .blocks {
     max-height: 400px; /* Reduced for mobile */
     overflow-y: auto;
@@ -160,7 +153,13 @@
     display: flex;
     flex-direction: column;
     gap: 12px;
-    -webkit-overflow-scrolling: 14px;
+    -webkit-overflow-scrolling: touch; /* Smooth iOS scroll */
+  }
+  
+  @media (min-width: 768px) {
+    .blocks {
+      max-height: 760px;
+      gap: 14px;
     }
   }
   
@@ -188,11 +187,6 @@
     color: var(--muted);
     margin: 6px 0;
     display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-  
-  .lines {
     font-weight: bold;
     color: var(--neon);
   }
@@ -203,7 +197,8 @@
   }
   
   .builder-block .name {
-    color: #22c-radius: 6px;
+    colorpx;
+    border-radius: 6px;
     overflow-x: auto;
     font-size: 11px;
     line-height: 1.3;
@@ -214,7 +209,8 @@
   
   /* OUTPUT AREA */
   #output {
-px;
+    background: #000;
+    padding:-size: 12px;
     max-height: 300px; /* Smaller on mobile */
     overflow: auto;
     white-space: pre;
@@ -226,12 +222,7 @@ px;
     #output {
       max-height: 560px;
       padding: 16px;
-      font-size: 13px;
-    }
-  }
-  
-  /* MODAL - FULLSCREEN ON MOBILE */
-  .modal {
+      font-size: .modal {
     position: fixed;
     top: 0;
     left: 0;
@@ -273,12 +264,7 @@ px;
   }
   
   .modal textarea {
-    height: calc(100vh - 200px); /* Dynamic height */
-    font-size: 14px;
-    margin-bottom: 12px;
-  }
-  
-  /* UTILITY CLASSES FOR MOBILE */
+    height: calc(100vh - 200  /* UTILITY CLASSES FOR MOBILE */
   .mobile-only {
     display: block;
   }
@@ -300,7 +286,7 @@ px;
   .swipe-hint {
     display: none;
     text-align: center;
--size: 12px;
+    font-size: 12px;
     color: var(--muted);
     padding: 8px;
     margin-top: 8px;
@@ -313,9 +299,7 @@ px;
   }
   
   /* TOUCH-OPTIMIZED SCROLLBARS */
-  ::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
+  :: 8px;
   }
   
   ::-webkit-scrollbar-track {
@@ -328,13 +312,7 @@ px;
     border-radius: 4px;
   }
   
-  ::-webkit-scrollbar-thumb:hover {
-    background: rgba(250, 204, 21, 0.8);
-  }
-  
-  /* PREVENT TEXT SELECTION ON BUTTONS */
-  button {
-    user-select: none;
+  ::-webkit-scroll    user-select: none;
     -webkit-user-select: none;
   }
   
@@ -349,32 +327,6 @@ px;
       margin: 2px;
     }
   }
-
-  /* Accordion specifics */
-  .accordion { border-radius:8px; overflow:hidden; margin-bottom:12px; }
-  .accordion .acc-header { display:flex; justify-content:space-between; align-items:center; padding:10px; cursor:pointer; background:rgba(255,255,255,0.02); border-bottom:1px solid rgba(255,255,255,0.02); }
-  .accordion .acc-body { display:none; padding:10 .acc-body { display:block; }
-  .acc-count { color:var(--muted); font-size:12px; margin-left:6px; }
-  .controls { display:flex; gap:8px; margin-bottom:8px; flex-wrap:wrap; }
-  .search { flex:1; min-width:120px; padding:8px; border-radius:6px; border:1px solid rgba(255,255fff; }
-  .drag-hint { font-size:12px; color:var(--muted); margin-top:6px; }
-  
-  /* Toast */
-  .toast {
-    position: fixed;
-    bottom: 20px;
-    left: 50%;
-    transform: translateX(-50%);
-    background: #facc15;
-    color: #000;
-    padding: 12px 24px;
-    border: 10000;
-    animation: fadeInOut 2s ease-in-out;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-  }
-  @keyframes fadeInOut {
-    0% { opacity: 0; bottom:  { opacity: 0; bottom: 40px; }
-  }
 </style>
 </head>
 <body>
@@ -383,7 +335,27 @@ px;
   <!-- LEFT PANEL - INPUT -->
   <div class="panel">
     <h2>Paste Your JS</h2>
-    <textarea id="input" placeholder="// Paste JS code here..."></textarea>
+    <textarea id="input" placeholder="// Paste JS code here
+// Or use the example below
+
+function hello(name) {
+  console.log('Hello ' + name);
+  return name.length;
+}
+
+const calculate = (a, b) => {
+  return a * b + 100;
+};
+
+class User {
+  constructor(name) {
+    this.name = name;
+  }
+  
+  greet() {
+    return `Hello ${this.name}`;
+  }
+}"></textarea>
     
     <div class="btn-row">
       <button class="primary" onclick="extract()">Extract Blocks</button>
@@ -393,28 +365,26 @@ px;
     
     <div class="mobile-only">
       <button class="small" onclick="pasteFromClipboard()">📋 Paste</button>
-      <" class="search" placeholder="Filter blocks by name or code..." oninput="renderGroups()">
-      <button class="small" onclick="expandAll()">Expand All</button>
-      <button class="small" onclick="collapseAll()">Collapse All</button>
-      <button class="small" onclick="groupToggle()">Group: <span id="groupMode">Type</span></button>
- <div class="swipe-hint">👆 Tap a block to edit name, use ➕ to add to builder</div>
-    <div id="groups" class="blocks"></div>
+      <button class="small" onclick="loadExample()">📖 Example</button>
+    </div>
+
+    <h2>Extracted Blocks</h2>
+    <div class="swipe-hint">👆 Tap to edit names, swipe to scroll</div>
+    <div id="blocks" class="blocks"></div>
   </div>
 
-  <!-- RIGHT PANEL - BUILDER -->
-  <div class="panel">
-    <h2>Builder</h2>
+  <!-- RIGHT PANEL - BUILh2>
     <div class="btn-row">
       <button class="danger" onclick="builder=[];update()">Clear Builder</button>
       <button class="small mobile-only" onclick="toggleBuilderView()">📱 View</button>
     </div>
     
-    <div class="swipe-hint">👆 Reorder blocks in builder (use ▲/▼), then copy/download</div>
+    <div class="swipe-hint">👆 Drag blocks from left, tap to reorder</div>
     <div id="builder" class="blocks" style="margin-top:8px;"></div>
 
     <h2 style="margin-top:20px;">Final Output</h2>
     <div class="btn-row">
-      <button classprimary" onclick="copy()">📋 Copy</button>
+      <button class="primary" onclick="copy()">📋 Copy</button>
       <button class="success" onclick="download()">📥 Download .js</button>
       <button class="small mobile-only" onclick="shareOutput()">📤 Share</button>
     </div>
@@ -435,349 +405,344 @@ px;
 </div>
 
 <!-- MOBILE KEYBOARD HINT -->
-<div id="keyboardHint" style="display:none; position:fixed; bottom:0; left:0; right:0; background:#111; color:#facc15; padding:10px; text-align:center; font-size:12px;">
-  Tap here to close keyboard 👆
+<div id="keyboardHint" style="display:none; position:fixed; bottom: Tap here to close keyboard 👆
 </div>
 
 <script>
-/* Improved AST-based extractor with grouping & conservative merging */
-
+// MOBILE OPTIMIZATION FUNCTIONS
 let originalBlocks = [];
 let builder = [];
 let editingIndex = -1;
 let isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-let groupMode = 'type';
 
-// Utility
-function escapeHtml(text) {
-  const d = document.createElement('div'); d.textContent = text; return d.innerHTML;
-}
-function showToast(message) {
-  const existing = document.querySelector('.toast');
-  if (existing) existing.remove();
-  const t = document.createElement('div');
-  t.className = 'toast';
-  t.textContent = message;
-  document.body.appendChild(t);
-  setTimeout(() => t.remove(), 1600);
-}
-function sliceSource(src, start, end) { return src.slice(start, end); }
+// Initialize with mobile optimizations
+document.addEventListener('DOMContentLoaded UX
+    document.querySelectorAll('.block').forEach(block => {
+      block.addEventListener('touchstart', function(e) {
+        this.style.transform = 'scale(0.98)';
+      });
+      
+      block.addEventListener('touchend', function(e) {
+        this.style.transform = 'scale(1)';
+      });
+    });
+    
+    // Handle keyboard show/hide
+    const textareas = textarea.addEventListener('focus', function() {
+        document.getElementById('keyboardHint').style.display = 'block';
+      });
+      
+      textarea.addEventListener('blur', function() {
+        document.getElementById('keyboardHint').style.display = 'none';
+      });
+    });
+    
+    // Close keyboard hint on tap
+    document.getElementById('keyboardHintnone';
+    });
+  }
+});
 
-// Mobile helpers
+// MOBILE-ONLY FUNCTIONS
 function pasteFromClipboard() {
-  if().then(text => {
-    document.getElementById('input').value = text;
-    showToast("✅ Pasted");
-  }).catch(() => alert("Could not paste"));
-}
-function loadExample() {
-  const ex = `// Cloudflare Worker-ish example
-import { something } from './lib.js';
-
-const SETTINGS = {
-  timeout: 3000
-};
-
-function handler(request) {
-  const url = new URL(request.url);
-  if (url.pathname === '/health') return new Response('OK');
-  return fetch(request);
-}
-
-addEventListener('fetch', event => {
-  event.respondWith(handler(event.request));
-});
-
-export default {
-  fetch: handler
-};`;
-  document.getElementById('input').value = ex;
-  showToast("Example loaded");
-}
-function shareOutput() {
-  const out = document.getElementById('output').textContent;
-  if (!out.trim()) { showToast("❌ No output"); return; }
-  if (navigator.share) {
-    navigator.share({ title: 'code-blox output', text: out.substring(0,200) });
-  } else { copy(); }
-}
-function toggleBuilderView() {
-  const b = document.getElementById('builder');
-  b.style.maxHeight = b.style.maxHeight === '200px' ? '400px' : '200px';
-  b.style.overflow = b.style.overflow === 'auto' ? 'hidden' : 'auto';
-}
-
-// Grouping & rendering
-function groupBlocksByType(blocks) {
-  const map = { imports: [], functions: [], classes: [], variables: [], exports: [], others: [] };
-  for (const b of blocks) {
-    if (b.type === 'import') map.imports.push(b);
-    else if (b.type === 'function') map.functions.push(b);
-    else if (b.type === 'class') map.classes.push(b);
-    else if (b.type === 'variable') map.variables.push(b);
-    else if (b.type === 'export') map.exports.push(b);
-    else map.others.push(b);
-  }
-  return map;
-}
-
-function renderGroups() {
-  const container = document.getElementById('groups');
-  const q = (document.getElementById('searchBlocks') || {value:''}).value.toLowerCase().trim();
-  if (!container) return;
-  const filtered = originalBlocks.filter(b => {
- && b.name.toLowerCase().includes(q)) ||
-           (b.content && b.content.toLowerCase().includes(q));
-  });
-  const groups = groupBlocksByType(filtered);
-  const sections = [
-    {key:'imports', title:'Imports'},
-    {key:'variables', title:'Variables / Consts'},
-    {key:'functions', title:'Functions'},
-    {key:'classes', title:'Classes'},
-    {key:'exports', title:'Exports'},
-    {key:'others', title:'Other Top-level'}
-  ];
-  container.innerHTML = sections.map(sec => {
-    const arr = groups[sec.key];
-    if (!arr || arr.length === 0) return '';
-    const items = arr.map((b) => `
-      <div class="block" data-id="${b.id}">
-        <div class="name" contenteditable="true" onblur="renameBlock('${b.id}', this.textContent.trim()||'${escape">${escapeHtml(b.name||b.type)}</div>
-        <div class="meta">
-          <span class="lines">${b.lines} lines</span>
-          <button class="small" onclick="openEditModalById('${b.id}')">✏️ Edit</button>
-          <button class="small" onclick="addToBuilderById('${b.id}')">➕ Add</button>
-        </div>
-      </div>
-    `). return `
-      <div class="accordion ${arr.length? 'acc-open' : ''}" id="acc-${sec.key}">
-        <div class="acc-header" onclick="toggleAccordion('acc-${sec.key}')">
-          <div>${sec.title} <span class="acc-count">(${arr.length})</span></div>
-          <div style="font-size:12px;color:var(--muted      </div>
-    `;
-  }).join('');
-}
-
-function toggleAccordion(id) {
-  const el = document.getElementById(id);
-  if (!el) return;
-  el.classList.toggle('acc-open');
-}
-function expandAll() { document.querySelectorAll('.accordion').forEach(a => a.classList.add('acc-open')); }
-function collapseAll() { document.querySelectorAll('.accordion').forEach(a => a.classList.remove('acc-open')); }
-function groupToggle(){ groupMode = 'type'; document.getElementById('groupMode').textContent = 'Type'; renderGroups(); }
-function renameBlock(id, newName) { const b = originalBlocks.find(x => x.id === id); if (b) { b.name = newName; renderGroups(); } }
-function findBlockById(id) { return originalBlocks.find(b => b.id === id); }
-function openEditModalById(id) { const idx = originalBlocks.findIndex(b => b.id === id); if (idx === -1) return; editBlock(idx); }
-function addToBuilderById(id) { const block = findBlockById(id); if (!block) return; if (!builder.find(b => b.id === id)) { builder.push({...block}); update(); showToast("Added to builder"); } else showToast("AlreadyById('editName').value = block.name;
-  document.getElementById('editCode').value = block.content;
-  document.getElementById('editorModal').style.display = 'block';
-  if (isMobile) setTimeout(()=>document.getElementById('editCode').focus(), 100);
-}
-function saveEdit(){
-  if (editingIndexName').value.trim() || b.name || 'anonymous';
-  b.content = document.getElementById('editCode').value;
-  b.lines = b.content.split('\n').length;
-  builder = builder.map(x => x.id === b.id ? {...b} : x);
-  closeEditor();
-  renderGroups();
-  update();
-  showToast("Saved");
-}
-function closeEditor(){ document.getElementById('editorModal').style.display = 'none'; editingIndex = -1; if (document.activeElement) document.activeElement.blur(); }
-
-// Builder & output
-function update(){
-  const builderEl = document.getElementById('builder');
-  const outputEl = document.getElementById('output');
-  if (!builderEl || !outputEl) return;
-  builderEl.innerHTML = builder.map((b, i) => `
-    <div class="block builder-block" data-id="${b.id}">
-      <div style="display:flex;justify-content:space-between;align-items:center">
-        <div class="name">${escapeHtml(b.name)}</div>
-        <div style="display:flex;gap:6px">
-          <button class="small" onclick="moveBuilder(${i},-1)">▲</button>
-          <button class="small" onclick="moveBuilder(${i},1)">▼</button>
-          <button class="danger small" onclick="builder.splice(${i},1);update();showToast('Removed')">✖</button>
-        </div>
-      </div>
-      <div class="meta"><span class="lines">${b.lines} lines</span></div>
-      <pre>${escapeHtml(b.content.trim())}</pre>
-    </div>
-  `).join('') || '<div style="color:#666;padding:20px;textn' : '');
-}
-function moveBuilder(index, delta) { const to = index + delta; if (to < 0 || to >= builder.length) return; const tmp = builder[to]; builder[to] = builder[index]; builder[index] = tmp; update(); }
-function addToBuilder(block) { if (!builder.find(b => b.id === block.id)) { builder.push({...block}); update(); showToast("Added"); } else showToast("Already added"); }
-
-// copy/download copy(){
-  const text = document.getElementById('output').textContent;
-  if (!text.trim()) { showToast("Nothing"); return; }
-  if (navigator.clipboard && navigator.clipboard.writeText) {
-    navigator.clipboard.writeText(text).then(()=>showToast("Copied"));
-  } else {
-    const ta = document.createElement('textarea'); ta.value = text; document.body.appendChild(ta); ta.select();
-    document.execCommand('copy'); document.body.removeChild(ta); showToast("Copied");
-  }
-}
-function download(){
-  const text = document.getElementById('output').textContent;
-  if (!text.trim()) { showToast("Nothing"); return; }
-  const blob = new Blob([text], {type:'application/javascript'});
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a'); a.href = url; a.download = 'code-blox-output.js'; a.click();
-  URL.revokeObjectURL(url); showToast("Download started");
-}
-
-// Close modal when clicking outside
-document.getElementById('editorModal').addEventListener('click', function(e){
-  if (e.target === this) closeEditor();
-});
-
-// Prevent accidental reload
-window.addEventListener('beforeunload', function(e){
-  if (Value = '';
-  }
-});
-
-/* ----- Conservative AST extractor ----- */
-function extract() {
-  const code = (document.getElementById('input')||{value:''}).value;
-  if (!code || !code.trim()) {
-    showToast("Paste code first");
+  if (!navigator.clipboard) {
+    alert("Clipboard not supported on this device");
     return;
   }
-  originalBlocks = [];
-  try {
-    const comments = [];
-    const ast = acorn.parse(code, {
-      ecmaVersion: "latest",
-      sourceType: "module",
-      ranges: true,
-      onComment: comments
-    });
-
-    for (const node of ast.body) {
-      let nodeToUse = node;
-      let t = node.type;
-
-      if (t === "ExportNamedDeclaration" || t === "ExportDefaultDeclaration") {
-        if (node.declaration) {
-          nodeToUse = node.declaration;
-          t = nodeToUse.type;
-        } else {
-          originalBlocks.push(makeBlock('export', 'export', code, node.start, node.end));
-          continue;
-        }
-      }
-
-      if (t === 'ImportDeclaration') {
-        originalBlocks.push(makeBlock('import', 'import', code, node.start, node.end));
-        continue;
-      }
-
-      if (t === 'FunctionDeclaration') {
-        const name = (nodeToUse.id && nodeToUse.id.name) || 'anonymous';
-        originalBlocks.push(makeBlock(name, 'function', code, node.start, node.end));
-        continue;
-      }
-
-      if (t === 'ClassDeclaration') {
-        const name = (nodeToUse.id && nodeToUse.id.name) || 'AnonymousClass';
-        originalBlocks.push(makeBlock(name, 'class', code, node.start, node.end));
-        continue;
-      }
-
-      if (t === 'VariableDeclaration') {
-        // Keep whole declaration (no per-declarator splitting)
-        const name = node.declarations && node.declarations[0] && node.declarations[0].id && node.declarations[0].id.name
-                     ? node.declarations[0].id.name : node.kind || 'variable';
-        originalBlocks.push(makeBlock(name, 'variable', code, node.start, node.end));
-        continue;
-      }
-
-      // fallback
-      originalBlocks.push(makeBlock(t, 'other', code, node.start, node.end));
-    }
-
-    if (originalBlocks.length === 0) {
-      originalBlocks.push({ id:'full', name:'Full Script', type:'full', content: code, start:0, end: code.length, lines: code.split('\n').length });
-    }
-
-    originalBlocks.sort((a,b)=> (a.start||0)-(b.start||0));
-    originalBlocks = mergeAdjacent(originalBlocks, code);
-
-    renderGroups();
-    showToast(`Extracted ${originalBlocks.length} blocks`);
-  } catch (err) {
-    console.error(err);
-    showToast(", src, start, end) {
-  const content = sliceSource(src, start, end);
-  return {
-    id: 'b' + Date.now().toString(36) + Math.random().toString(36).slice(2,8),
-    name: name || type,
-    type: type || 'other',
-    content,
-    start,
-    end,
-   Adjacent(blocks, src) {
-  if (!blocks.length) return blocks;
-  const merged = [ { ...blocks[0] } ];
-  for (let i=1;i<blocks.length;i++) {
-    const prev = merged[merged.length-1];
-    const curr = blocks[i];
-    const between = src.slice(prev.end, curr.start);
-    const onlyWhitespace = between.trim() === '';
-    const bothVarsOrImportOrOther = (prev.type === 'variable' || prev.type === 'other' || prev.type === 'import') &&
-                                    (curr.type === 'variable' || curr.type === 'other' || curr.type === 'import');
-    const currIsTiny = (curr.lines <= 3);
-    if (onlyWhitespace && bothVarsOrImportOrOther) {
-      prev.end = curr.end;
-      prev.content = sliceSource(src, prev.start, prev.end);
-      prev.lines = prev.content.split('\n').length;
-      prev.name = prev.name || curr.name;
-      continue;
-    }
-    if (currIsTiny && between.length <= 2) {
-      prev.end = curr.end;
-      prev.content = sliceSource(src, prev.start, prev.end);
-      prev.lines = prev.content.split('\n').length;
-      continue;
-    }
-    merged.push({ ...curr });
-  }
-  return merged;
+  
+  navigator.clipboard.readText().then(text => {
+    document.getElementById('input').value = text;
+    showToast("✅ Pasted from clipboard");
+  }).catch(err => {
+    alert("Could not paste. Try manual paste instead.");
+  });
 }
 
-function rebuildOriginal() {
+function loadExample() {
+  const example = `// Example JavaScript with multiple blocks
+function calculateTotal(items) {
+  return items.reduce((sum, item) => sum + item.price, 0);
+}
+
+const user = {
+  name: "Alex",
+  age: 30,
+  greet() {
+    return \`Hello, my name is \${this.name}\`;
+  }
+  
+  applyDiscount(percent) {
+    this.price = this.price * (1 - percent/100);
+    return this.price;
+  }
+}
+
+// Arrow function example
+const formatCurrency = (amount) => \`$\${amount.toFixed(2)}\`;
+
+// Utility function
+function debounce(func, wait) {
+  let timeout;
+  return function executedFunction(...args) {
+    timeout = setTimeout(later, wait);
+  };
+}`;
+  
+  document.getElementById('input').value = example;
+  showToast("📖 Example loaded");
+}
+
+function shareOutput() {
+  const output = document.getElementById('output').textContent;
+  if (!output.trim()) {
+    showToast("❌ No output to share");
+    return;
+ output.substring(0, 100) + '...',
+      url: window.location.href
+    });
+  } else {
+    copy();
+  }
+}
+
+function toggleBuilderView() {
+  const builderEl = document.getElementById('builder');
+  const isCollapsed = builderEl.style.maxHeight === '200px';
+  
+  if (isCollapsed) {
+    builderEl.style.maxHeight = '400px';
+    builderElHeight = '200px';
+    builderEl.style.overflow = 'hidden';
+  }
+}
+
+// TOAST NOTIFICATIONS (MOBILE-FRIENDLY)
+function showToast(message) {
+  // Remove existing toast
+  const existing = document.querySelector('.toast');
+  if (existing) existing.remove();
+  
+  const toast = document.createElement('div');
+  toast.className = 'toast';
+  toast.textContent = message;
+  toast.style.cssText = `
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #facc15;
+    color: #000;
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-weight: bold;
+    z-index: 10000;
+    animation: fadeInOut  document.body.appendChild(toast);
+  
+  // Add CSS animation
+  if (!document.querySelector('#toast-style')) {
+    const style = document.createElement('style');
+    style.id = 'toast-style';
+    style.textContent = `
+      @keyframes fadeInOut {
+        0% { opacity: 0; bottom20px; }
+        100% { opacity: 0; bottom: 40px; }
+      }
+    `;
+    document.head.appendChild(style);
+  }
+  
+  setTimeout(() => toast.remove(), 2000);
+}
+
+// ORIGINAL FUNCTIONS (OPTIMIZED FOR MOBILE)
+function extract(){
+  const code = document.getElementById('input').value.trim();
+  if(!code) {
+    showToast("❌ Paste code first");
+    return;
+  }
+
+  originalBlocks = [];
+  const lines = code.split('\n');
+  let current = [], brace = 0, paren = 0;
+
+  const finishBlock = () => {
+    if(current.length === 0) return;
+    const content = current.join('\n');
+    if(!content.trim()) return;
+
+    const nameMatch =
+      content.match(/(function|const|let|var|class)\s+([A-Za-z_$][A-Za-z0-9_$]*)|([A-Za-z_$][A-Za-z0-9_$]*)\s*=/) || [];
+    const name = nameMatch[2] || nameMatch[3] || "anonymous";
+
+    originalBlocks.push({
+      id: 'b' + Date.now() + Math.random(),
+      name: name,
+      content: content,
+      lines: content.split('\n').length
+    });
+    current = [];
+  };
+
+  for(let line of lines){
+    current.push(line);
+    for(let ch of line){
+      if(ch==='{') brace++;
+      if(ch==='}') brace--;
+      if(ch==='(') paren++;
+      if(ch===')') paren--;
+    }
+    if(brace === 0 && paren <= 0 && current.length > 1) finishBlock();
+  }
+  finishBlock();
+
+  if(originalBlocks.length === 0){
+    originalBlocks.push({id:'full',name:'Full Script',content:Toast(`✅ Extracted ${originalBlocks.length} blocks`);
+}
+
+function renderBlocks(){
+  const blocksContainer = document.getElementById('blocks');
+  if (!blocksContainer) return;
+  
+  blocksContainer.innerHTML = originalBlocks.map((b, i) => `
+    <div class="block" data-id="${b.id}">
+      <div class="name" contenteditable="true"
+           onblur="originalBlocks[${i}].name=this.textContent.trim()||'anonymous'">
+        ${b.name}
+      </div>
+      <div class="meta">
+        <span class="lines">${b.lines} lines</span>
+        <button class="small" onclick="editBlock(${i})">✏️ Edit</button>
+        <button class="small" onclick="extractThis('${b.id}')">➕ Add</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function editBlock(i){
+  editingIndex = i;
+  const block = originalBlocks[i];
+  document.getElementById('editName').value = block.name;
+  document.getElementById('editCode').value = block.content;
+  document.getElementById('editorModal').style.display = 'block';
+  
+  // Focus the edit field on mobile
+  if (isMobile) {
+    setTimeout(() => {
+      document.getElementById('editCode').focus();
+    }, 100);
+  }
+}
+
+function saveEdit(){
+  if(editingIndex === -1) return;
+  const block = originalBlocks[editingIndex];
+  block.name = document.getElementById('editName').value.trim() || "anonymous";
+  block.content = document.getElementById('editCode').value;
+  block.lines = block.content.split('\n').length;
+  closeEditor();
+  renderBlocks();
+  update();
+  showToast("💾 Changes saved");
+}
+
+function closeEditor(){
+  document.getElementById('editorModal').style.display = 'none';
+  editingIndex = -1;
+  
+  // Blur any active element
+  if (document.activeElement) {
+    document.activeElement.blur();
+  }
+}
+
+function extractThis(id){
+  const block = originalBlocks.find(b => b.id === id);
+  if(block && !builder.find(b => bElementById('builder');
+  const outputContainer = document.getElementById('output');
+  
+  if (!builderContainer || !outputContainer) return;
+  
+  builderContainer.innerHTML = builder.map((b, i) => `
+    <div class="block builder-block">
+      <div class="name">${b.name}</div>
+      <div class="meta">
+        <span class="lines">${b.lines} lines</span>
+        <button class="danger small" onclick="builder.splice(${i},1);update();showToast('🗑️ Removed')">Remove</button>
+      </div>
+      <pre>${escapeHtml(b.content.trim())}</pre>
+    </div>
+  `).join('') || '<div style="color:#666;padding:20px;text-align:center;">No blocks in builder yet</div>';
+
+  outputContainer.textContent =
+    builder.map(b => b.content.trim()).join('\n\n') + (builder.length ? '\n' : '');
+}
+
+function escapeHtml(text) {
+  const div = document.createElement('div');
+  div.textContent = text;
+  return div.innerHTML;
+}
+
+function rebuildOriginal(){
   builder = originalBlocks.map(b => ({...b}));
   update();
-  showToast("Rebuilt original");
+  showToast("🔄 Original rebuilt");
 }
 
-// Initialize
-document.addEventListener('DOMContentLoaded', () => {
-  if (isMobile) {
-    const textareas = document.querySelectorAll('textarea');
-    textareas.forEach(t => {
-      t.addEventListener('focus', ()=>document.getElementById('keyboardHint').style.display = 'block');
-      t.addEventListener('blur', ()=>document.getElementById('keyboardHint').style.display = 'none');
-    });
-    document.getElementById('keyboardHint').addEventListener('click', ()=> {
-      if (document.activeElement) document.activeElement.blur();
-      document.getElementById('keyboardHint').style.display = 'none';
-    });
+function copy(){
+  const text = document.getElementById('output').textContent;
+  if (!text.trim()) {
+    showToast("❌ Nothing to copy");
+    return;
   }
-  if (!localStorage.getItem('codeblox_visited')) {
-    localStorage.setItem('codeblox_visited','1');
-    setTimeout(loadExample, 400);
+  
+  navigator.clipboard.writeText(text).then(() => {
+    showToast("📋 Copied to clipboard!");
+  }).catch(err => {
+    // Fallback for older browsers
+    const textarea = document.createElement('textarea');
+    textarea.value = text;
+    document.body.appendChild(textarea);
+    textarea.select();
+    document.execCommand('copy');
+    document.body.removeChild(textarea);
+    showToast("📋 Copied!");
+  });
+}
+
+function download(){
+  constById('output').textContent;
+  if (!text.trim()) {
+    showToast("❌ Nothing to download");
+    return;
+  }
+  
+  const blob = new Blob([text], {type:'application/javascript'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'code-blox-output.js';
+  a}
+
+// Close modal when clicking outside (mobile-friendly)
+document.getElementById('editorModal').addEventListener('click', function(e) {
+  if (e.target === this) {
+    closeEditor();
   }
 });
 
-// Small helper used in some places
-function addToBuilderId(id) { const b = findBlockById(id); if (b) addToBuilder(b); }
-function findBlockById(id) { return originalBlocks.find(b => b.id === id); }
+// Prevent accidental page reload on mobile
+window.addEventListener('beforeunload', function(e) {
+  if (builder.length > 0 || document.getElementById(' e.returnValue = '';
+  }
+});
 
+// Load a simple example on first visit
+if (!localStorage.getItem('codeblox_visited')) {
+  localStorage.setItem('codeblox_visited', 'true');
+  setTimeout(loadExample, 500);
+}
 </script>
 </body>
 </html>

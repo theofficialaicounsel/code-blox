@@ -3,12 +3,15 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>code-blox: js</title>
+<title>code-blox: js (AST-based)</title>
+
+<!-- Acorn parser for robust AST extraction -->
+<script src="https://unpkg.com/acorn@8.8.2/dist/acorn.min.js"></script>
+<script src="https://unpkg.com/acorn-walk@8.2.0/dist/walk.min.js"></script>
+
 <style>
   /* MOBILE-FIRST APPROACH */
-  :root {
-    --neon: #facc15;
-    --neon-glow: 0 0 10px rgba(250, 204, 21, 0.5);
+  :root 0.5);
     --panel: #000;
     --text: #fff;
     --muted: #94a3b8;
@@ -22,8 +25,7 @@
     background: #000;
     color: var(--text);
     margin: 0;
-    padding: 12px; /* Reduced padding for mobile */
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, monospace;
+    padding: 12px;;
     -webkit-text-size-adjust: 100%;
     -webkit-tap-highlight-color: transparent;
   }
@@ -59,7 +61,7 @@
   /* PANELS */
   .panel {
     background: var(--panel);
-    border: 2px solid rgba(250, 204, 21, 0.3); /* Thinner border for mobile */
+    border: 2px solid rgba(250, for mobile */
     border-radius: 12px; /* Smaller radius */
     padding: 16px; /* Reduced padding */
     min-height: auto;
@@ -165,13 +167,7 @@
     min-width: 60px;
   }
   
-  /* BLOCKS CONTAINER - SCROLLABLE */
-  .blocks {
-    max-height: 400px; /* Reduced for mobile */
-    overflow-y: auto;
-    overflow-x: hidden;
-    display: flex;
-    flex-direction: column;
+  /* BLOCKS CONTAINER - SCROLLABLE column;
     gap: 12px;
     -webkit-overflow-scrolling: touch; /* Smooth iOS scroll */
   }
@@ -183,10 +179,7 @@
     }
   }
   
-  /* INDIVIDUAL BLOCKS */
-  .block {
-    background: rgba(250, 204, 21, 0.1);
-    border: 1px solid rgba(250, 204, 21, 0.5);
+  /* INDIVIDUAL BLOCKS250, 204, 21, 0.12);
     border-radius: 8px;
     padding: 12px;
     position: relative;
@@ -200,6 +193,7 @@
     cursor: text;
     color: var(--neon);
     line-height: 1.3;
+    outline: none;
   }
   
   .meta {
@@ -219,7 +213,7 @@
   
   .builder-block {
     border-left: 4px solid #22c55e;
-    background: rgba(34, 197, 94, 0.2);
+    background: rgba(34, 197, 94, 0.06);
   }
   
   .builder-block .name {
@@ -294,13 +288,7 @@
     border: 1px solid var(--neon);
     border-radius: 8px;
     outline: none;
-    box-sizing: border-box;
-    -webkit-appearance: none;
-  }
-  
-  .modal input:focus {
-    border-width: 2px;
-    box-shadow: 0 0 8px rgba(250, 204, 21, 0.5);
+    box-sizing: border(250, 204, 21, 0.5);
   }
   
   .modal textarea {
@@ -314,12 +302,7 @@
     display: block;
   }
   
-  .desktop-only {
-    display: none;
-  }
-  
-  @media (min-width: 768px) {
-    .mobile-only {
+  .    .mobile-only {
       display: none;
     }
     .desktop-only {
@@ -371,14 +354,30 @@
   
   /* IMPROVE READABILITY ON SMALL SCREENS */
   @media (max-width: 767px) {
-    .block pre {
-      font-size: 10px;
+    .block pre      font-size: 10px;
       padding: 8px;
     }
     
     .meta button {
       margin: 2px;
     }
+  }
+
+  /* Toast styling (added in CSS so no runtime injection needed) */
+  .toast {
+    position: fixed;
+    bottom: 20px;
+ border-radius: 8px;
+    font-weight: bold;
+    z-index: 10000;
+    animation: fadeInOut 2s ease-in-out;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+  }
+  @keyframes fadeInOut {
+    0% { opacity: 0; bottom: 0; }
+    10% { opacity: 1; bottom: 20px; }
+    90% { opacity: 1; bottom: 20px; }
+    100% { opacity: 0; bottom: 40px; }
   }
 </style>
 </head>
@@ -419,10 +418,7 @@ class User {
     <div class="mobile-only">
       <button class="small" onclick="pasteFromClipboard()">📋 Paste</button>
       <button class="small" onclick="loadExample()">📖 Example</button>
-    </div>
-
-    <h2>Extracted Blocks</h2>
-    <div class="swipe-hint">👆 Tap to edit names, swipe to scroll</div>
+👆 Tap to edit names, swipe to scroll</div>
     <div id="blocks" class="blocks"></div>
   </div>
 
@@ -439,8 +435,7 @@ class User {
 
     <h2 style="margin-top:20px;">Final Output</h2>
     <div class="btn-row">
-      <button class="primary" onclick="copy()">📋 Copy</button>
-      <button class="success" onclick="download()">📥 Download .js</button>
+="download()">📥 Download .js</button>
       <button class="small mobile-only" onclick="shareOutput()">📤 Share</button>
     </div>
     
@@ -465,56 +460,49 @@ class User {
 </div>
 
 <script>
-// MOBILE OPTIMIZATION FUNCTIONS
-let originalBlocks = [];
-let builder = [];
-let editingIndex = -1;
+/* GitHub Copilot Chat Assistant - AST-based extraction and UI
+   Complete, copylet editingIndex = -1;
 let isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 
-// Initialize with mobile optimizations
+// Initialize UI enhancements (mobile friendly)
 document.addEventListener('DOMContentLoaded', function() {
-  if (isMobile) {
-    // Add touch event listeners for better UX
-    document.querySelectorAll('.block').forEach(block => {
-      block.addEventListener('touchstart', function(e) {
-        this.style.transform = 'scale(0.98)';
-      });
-      
-      block.addEventListener('touchend', function(e) {
-        this.style.transform = 'scale(1)';
-      });
-    });
-    
-    // Handle keyboard show/hide
-    const textareas = document.querySelectorAll('textarea');
+  // focus styling for.querySelectorAll('textarea');
     textareas.forEach(textarea => {
       textarea.addEventListener('focus', function() {
         document.getElementById('keyboardHint').style.display = 'block';
       });
-      
       textarea.addEventListener('blur', function() {
         document.getElementById('keyboardHint').style.display = 'none';
       });
     });
-    
-    // Close keyboard hint on tap
     document.getElementById('keyboardHint').addEventListener('click', function() {
-      document.activeElement.blur();
+      if (document.activeElement) document.activeElement.blur();
       this.style.display = 'none';
     });
   }
+
+  // Load example once per first visit
+  if (!localStorage.getItem('codeblox_visited')) {
+    localStorage.setItem('codeblox_visited', 'true');
+    setTimeout(loadExample, 500);
+  }
 });
+
+// TOAST
+function showToast(message) {
+  const existing = document.querySelector('.toast');
+  if (existing) existing.remove();
+  const toast = document.createElement('div');
+  toast.className = 'toast';
+  toast.textContent = message;
+  document.body.appendChild(toast);
+  setTimeout(() => toast.remove(), 2000);
+}
 
 // MOBILE-ONLY FUNCTIONS
 function pasteFromClipboard() {
   if (!navigator.clipboard) {
-    alert("Clipboard not supported on this device");
-    return;
-  }
-  
-  navigator.clipboard.readText().then(text => {
-    document.getElementById('input').value = text;
-    showToast("✅ Pasted from clipboard");
+    alert("Clipboard notToast("✅ Pasted from clipboard");
   }).catch(err => {
     alert("Could not paste. Try manual paste instead.");
   });
@@ -528,9 +516,7 @@ function calculateTotal(items) {
 
 const user = {
   name: "Alex",
-  age: 30,
-  greet() {
-    return \`Hello, my name is \${this.name}\`;
+${this.name}\`;
   }
 };
 
@@ -561,18 +547,14 @@ function debounce(func, wait) {
     timeout = setTimeout(later, wait);
   };
 }`;
-  
   document.getElementById('input').value = example;
   showToast("📖 Example loaded");
 }
 
 function shareOutput() {
-  const output = document.getElementById('output').textContent;
-  if (!output.trim()) {
-    showToast("❌ No output to share");
+  const output = document.getElementBy to share");
     return;
   }
-  
   if (navigator.share) {
     navigator.share({
       title: 'code-blox Output',
@@ -584,10 +566,8 @@ function shareOutput() {
   }
 }
 
-function toggleBuilderView() {
-  const builderEl = document.getElementById('builder');
+function toggleBuilderView builder = document.getElementById('builder');
   const isCollapsed = builderEl.style.maxHeight === '200px';
-  
   if (isCollapsed) {
     builderEl.style.maxHeight = '400px';
     builderEl.style.overflow = 'auto';
@@ -597,127 +577,207 @@ function toggleBuilderView() {
   }
 }
 
-// TOAST NOTIFICATIONS (MOBILE-FRIENDLY)
-function showToast(message) {
-  // Remove existing toast
-  const existing = document.querySelector('.toast');
-  if (existing) existing.remove();
-  
-  const toast = document.createElement('div');
-  toast.className = 'toast';
-  toast.textContent = message;
-  toast.style.cssText = `
-    position: fixed;
-    bottom: 20px;
-    left: 50%;
-    transform: translateX(-50%);
-    background: #facc15;
-    color: #000;
-    padding: 12px 24px;
-    border-radius: 8px;
-    font-weight: bold;
-    z-index: 10000;
-    animation: fadeInOut 2s ease-in-out;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-  `;
-  
-  document.body.appendChild(toast);
-  
-  // Add CSS animation
-  if (!document.querySelector('#toast-style')) {
-    const style = document.createElement('style');
-    style.id = 'toast-style';
-    style.textContent = `
-      @keyframes fadeInOut {
-        0% { opacity: 0; bottom: 0; }
-        10% { opacity: 1; bottom: 20px; }
-        90% { opacity: 1; bottom: 20px; }
-        100% { opacity: 0; bottom: 40px; }
-      }
-    `;
-    document.head.appendChild(style);
-  }
-  
-  setTimeout(() => toast.remove(), 2000);
+// HTML escaping helper
+function escapeHtml(text) {
+  const div = document.createElement('div');
+  div.textContent = text;
+  return div.innerHTML;
 }
 
-// ORIGINAL FUNCTIONS (OPTIMIZED FOR MOBILE)
-function extract(){
-  const code = document.getElementById('input').value.trim();
-  if(!code) {
+// AST helper to slice original source exactly
+function sliceSource(src, start, end) {
+  return src.slice(start, end);
+}
+
+/* AST-BASED EXTRACTION
+   Uses acorn (loaded via CDN) to parse top-level program nodes and preserve exact source slices.
+*/
+function extract() {
+  const code = document.getElementById('input').value;
+  if (!code || !code.trim()) {
     showToast("❌ Paste code first");
     return;
   }
 
   originalBlocks = [];
-  const lines = code.split('\n');
-  let current = [], brace = 0, paren = 0;
 
-  const finishBlock = () => {
-    if(current.length === 0) return;
-    const content = current.join('\n');
-    if(!content.trim()) return;
-
-    const nameMatch =
-      content.match(/(function|const|let|var|class)\s+([A-Za-z_$][A-Za-z0-9_$]*)|([A-Za-z_$][A-Za-z0-9_$]*)\s*=/) || [];
-    const name = nameMatch[2] || nameMatch[3] || "anonymous";
-
-    originalBlocks.push({
-      id: 'b' + Date.now() + Math.random(),
-      name: name,
-      content: content,
-      lines: content.split('\n').length
+  try {
+    const comments = [];
+    const ast = acorn.parse(code, {
+      ecmaVersion: "latest",
+      sourceType: "module",
+      ranges: true,
+      onComment: comments
     });
-    current = [];
-  };
 
-  for(let line of lines){
-    current.push(line);
-    for(let ch of line){
-      if(ch==='{') brace++;
-      if(ch==='}') brace--;
-      if(ch==='(') paren++;
-      if(ch===')') paren--;
+    for (const node of ast.body) {
+      // unwrap export declarations to the inner declaration if present
+      let realNode = node;
+      let nodeType = node.type;
+      if (node.type === "ExportNamedDeclaration" || node.type === "ExportDefaultDeclaration") {
+        if (node.declaration) {
+          realNode = node.declaration;
+          nodeType = realNode.type;
+        } else {
+          // export { x, y } from ...
+          originalBlocks.push({
+            id: 'b' + Date.now() + Math.random(),
+            name: "export",
+            type: "export",
+            content: sliceSource(code, node.start, node.end),
+            start: node.start,
+            end: node.end,
+            lines: sliceSource(code, node.start, node.end).split('\n').length
+          });
+          continue;
+        }
+      }
+
+      // FunctionDeclaration
+      if (nodeType === "FunctionDeclaration") {
+        const name = (realNode.id && realNode.id.name) ? realNode.id.name : "anonymous";
+        originalBlocks.push({
+          id: 'b' + Date.now() + Math.random(),
+          name,
+          type: "function",
+          content: sliceSource(code, node.start, node.end),
+          start: node.start,
+          end: node.end,
+          lines: sliceSource(code, node.start, node.end).split('\n').length
+        });
+        continue;
+      }
+
+      // ClassDeclaration
+      if (nodeType === "ClassDeclaration") {
+        const name = (realNode.id && realNode.id.name) ? realNode.id.name : "AnonymousClass";
+        originalBlocks.push({
+          id: 'b' + Date.now() + Math.random(),
+          name,
+          type: "class",
+          content: sliceSource(code, node.start, node.end),
+          start: node.start,
+          end: node.end,
+          lines: sliceSource(code, node.start, node.end).split('\n').length
+        });
+        continue;
+      }
+
+      // VariableDeclaration — split into variable declarators (const a = () => {} ; const b = 1;)
+      if (nodeType === "VariableDeclaration") {
+        for (const d of realNode.declarations) {
+          const init = d.init;
+          const name = (d.id && d.id.name) ? d.id.name : "var";
+          if (!init) {
+            originalBlocks.push({
+              id: 'b' + Date.now() + Math.random(),
+              name,
+              type: "variable",
+              content: sliceSource(code, d.start, d.end),
+              start: d.start,
+              end: d.end,
+              lines: sliceSource(code, d.start, d.end).split('\n').length
+            });
+            continue;
+          }
+
+          if (init.type === "FunctionExpression" || init.type === "ArrowFunctionExpression") {
+            originalBlocks.push({
+              id: 'b' + Date.now() + Math.random(),
+              name,
+              type: "function",
+              content: sliceSource(code, d.start, d.end),
+              start: d.start,
+              end: d.end,
+              lines: slice {
+            originalBlocks.push({
+              id: 'b' + Date.now() + Math.random(),
+              name,
+              type: "variable",
+              content: sliceSource(code, d.start, d.end),
+              start: d.start,
+              end: d.end,
+              lines: sliceSource(code, d.start, d.end).split('\n').length
+            });
+          }
+        }
+        continue;
+      }
+
+      // ImportDeclaration        originalBlocks.push({
+          id: 'b' + Date.now() + Math.random(),
+          name: "import",
+          type: "import",
+          content: sliceSource(code, node.start, node.end),
+          start: node.start,
+          end: node.end,
+          lines: sliceSource(code, node.startBlocks.push({
+        id: 'b' + Date.now() + Math.random(),
+        name: nodeType,
+        type: "other",
+        content: sliceSource(code, node.start, node.end),
+        start: node.start,
+        end: node.end,
+        lines: sliceSource(code, node.start, node.end).split('\n').length
+      });
     }
-    if(brace === 0 && paren <= 0 && current.length > 1) finishBlock();
-  }
-  finishBlock();
 
-  if(originalBlocks.length === 0){
-    originalBlocks.push({id:'full',name:'Full Script',content:code,lines:code.split('\n').length});
-  }
+    if (originalBlocks.length === 0) {
+      // fallback: full file
+      originalBlocks.push({
+        id: 'full',
+        name: 'Full Script',
+        type: 'full',
+        content: code,
+        start: 0,
+        end: code.length,
+        lines: code.split('\n').length
+      });
+    }
 
-  renderBlocks();
-  showToast(`✅ Extracted ${originalBlocks.length} blocks`);
+    // Preserve original order
+    originalBlocks.sort((a, b) => (a.start || 0) - (b.start || 0));
+
+    renderBlocks();
+    showToast(`✅ Extracted ${originalBlocks.length} blocks`);
+  } catch (err) {
+    console.error(err);
+    showToast("❌ Parse error — check syntax or try simpler input");
+  }
 }
 
+// Render extracted blocks on the left panel
 function renderBlocks(){
   const blocksContainer = document.getElementById('blocks');
   if (!blocksContainer) return;
-  
-  blocksContainer.innerHTML = originalBlocks.map((b, i) => `
-    <div class="block" data-id="${b.id}">
-      <div class="name" contenteditable="true"
-           onblur="originalBlocks[${i}].name=this.textContent.trim()||'anonymous'">
-        ${b.name}
+  blocksContainer.innerHTML = originalBlocks.map((b, i) => {
+    const safeName = escapeHtml(b.name);
+    const typeLabel = escapeHtml(b.type || 'other');
+    return `
+      <div class="block" data-id="${b.id}">
+        <div class="name" contenteditable="true"
+             onblur="originalBlocks[${i}].name=this.textContent.trim()||'${safeName.replace(/'/g,"\\'")}'">
+          ${safeName}
+        </div>
+        <div class="meta">
+          <span class="lines">${b.lines} lines</span>
+          <span style="color:#94a3b8;margin-left:8px;">${typeLabel}</span>
+          <button class="small" onclick="editBlock(${i})">✏️ Edit</button>
+          <button class="small" onclick="extractThis('${b.id}')">➕ Add</button>
+        </div>
       </div>
-      <div class="meta">
-        <span class="lines">${b.lines} lines</span>
-        <button class="small" onclick="editBlock(${i})">✏️ Edit</button>
-        <button class="small" onclick="extractThis('${b.id}')">➕ Add</button>
-      </div>
-    </div>
-  `).join('');
+    `;
+  }).join('');
 }
 
+// Edit block modal
 function editBlock(i){
   editingIndex = i;
   const block = originalBlocks[i];
   document.getElementById('editName').value = block.name;
   document.getElementById('editCode').value = block.content;
   document.getElementById('editorModal').style.display = 'block';
-  
-  // Focus the edit field on mobile
+
   if (isMobile) {
     setTimeout(() => {
       document.getElementById('editCode').focus();
@@ -726,7 +786,7 @@ function editBlock(i){
 }
 
 function saveEdit(){
-  if(editingIndex === -1) return;
+  if (editingIndex === -1) return;
   const block = originalBlocks[editingIndex];
   block.name = document.getElementById('editName').value.trim() || "anonymous";
   block.content = document.getElementById('editCode').value;
@@ -740,83 +800,74 @@ function saveEdit(){
 function closeEditor(){
   document.getElementById('editorModal').style.display = 'none';
   editingIndex = -1;
-  
-  // Blur any active element
-  if (document.activeElement) {
-    document.activeElement.blur();
-  }
+  if (document.activeElement) document.activeElement.blur();
 }
 
+// Add a block to builder by id (keeps copy)
 function extractThis(id){
   const block = originalBlocks.find(b => b.id === id);
-  if(block && !builder.find(b => b.id === id)){
+  if (block && !builder.find(b => b.id === id)) {
     builder.push({...block});
     update();
     showToast("✅ Added to builder");
+  } else {
+    showToast("ℹ️ Already in builder");
   }
 }
 
+// Update builder UI & output area
 function update(){
   const builderContainer = document.getElementById('builder');
   const outputContainer = document.getElementById('output');
-  
   if (!builderContainer || !outputContainer) return;
-  
+
   builderContainer.innerHTML = builder.map((b, i) => `
-    <div class="block builder-block">
-      <div class="name">${b.name}</div>
-      <div class="meta">
-        <span class="lines">${b.lines} lines</span>
-        <button class="danger small" onclick="builder.splice(${i},1);update();showToast('🗑️ Removed')">Remove</button>
+    <div class="block builder-block" data-id="${b.id}">
+      <div class="name">${escapeHtml(b.name)}</div>
+      <div class=" onclick="builder.splice(${i},1);update();showToast('🗑️ Removed')">Remove</button>
       </div>
       <pre>${escapeHtml(b.content.trim())}</pre>
     </div>
   `).join('') || '<div style="color:#666;padding:20px;text-align:center;">No blocks in builder yet</div>';
 
-  outputContainer.textContent =
-    builder.map(b => b.content.trim()).join('\n\n') + (builder.length ? '\n' : '');
+  // Output is exact concatenation of block contents in current b.content).join('\n\n') + (builder.length ? '\n' : '');
 }
 
-function escapeHtml(text) {
-  const div = document.createElement('div');
-  div.textContent = text;
-  return div.innerHTML;
-}
-
+// Rebuild builder with the original AST-preserved order
 function rebuildOriginal(){
   builder = originalBlocks.map(b => ({...b}));
   update();
-  showToast("🔄 Original rebuilt");
+  showToast("🔄 Original rebuilt (AST-preserved order)");
 }
 
+// Copy output to clipboard
 function copy(){
-  const text = document.getElementById('output').textContent;
-  if (!text.trim()) {
-    showToast("❌ Nothing to copy");
+  const text = document.get");
     return;
   }
-  
-  navigator.clipboard.writeText(text).then(() => {
-    showToast("📋 Copied to clipboard!");
-  }).catch(err => {
-    // Fallback for older browsers
-    const textarea = document.createElement('textarea');
-    textarea.value = text;
-    document.body.appendChild(textarea);
-    textarea.select();
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(text).then(() => {
+      showToast("📋 Copied to clipboard!");
+    }).catch(() => fallbackCopy(text));
+  } else {
+    fallbackCopy(text);
+  }
+
+  function fallback.body.appendChild(ta);
+    ta.select();
     document.execCommand('copy');
-    document.body.removeChild(textarea);
+    document.body.removeChild(ta);
     showToast("📋 Copied!");
-  });
+  }
 }
 
+// Download output as .js
 function download(){
   const text = document.getElementById('output').textContent;
   if (!text.trim()) {
     showToast("❌ Nothing to download");
     return;
   }
-  
   const blob = new Blob([text], {type:'application/javascript'});
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
@@ -834,20 +885,13 @@ document.getElementById('editorModal').addEventListener('click', function(e) {
   }
 });
 
-// Prevent accidental page reload on mobile
+// Prevent accidental page reload
 window.addEventListener('beforeunload', function(e) {
   if (builder.length > 0 || document.getElementById('input').value.trim()) {
-    // Modern browsers don't allow custom messages
     e.preventDefault();
     e.returnValue = '';
   }
 });
-
-// Load a simple example on first visit
-if (!localStorage.getItem('codeblox_visited')) {
-  localStorage.setItem('codeblox_visited', 'true');
-  setTimeout(loadExample, 500);
-}
 </script>
 </body>
 </html>
